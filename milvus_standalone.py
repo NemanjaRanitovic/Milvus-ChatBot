@@ -10,6 +10,8 @@ import spacy
 from datetime import datetime
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.pagesizes import letter
+from fastapi.middleware.cors import CORSMiddleware
+
 
 
 
@@ -22,6 +24,14 @@ from insertScripts.busStops import insertBusStops
 from insertScripts.landmarks import insertLandmarks
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 MILVUS_HOST = 'standalone'
 MILVUS_PORT = 19530
@@ -244,7 +254,7 @@ async def searchCollections(body: Querry):
         return {"message": "Error occurred during Milvus connection:", "error": str(e)}
     
 # <<<<<<=============================================Complex Querry=============================================>>>>>>
-@app.get("/searchLandmarks1")
+@app.post("/searchLandmarks1")
 async def searchLandmarks1(body: SearchLandmarks):
     try:
         vectors = [nlp(name).vector for name in body.landmark]
@@ -289,7 +299,7 @@ async def searchLandmarks1(body: SearchLandmarks):
     except Exception as e:
         return {"message": "Error occurred during Milvus connection:", "error": str(e)}
     
-@app.get("/searchStops1")
+@app.post("/searchStops1")
 async def searchStops1(body: SearchStops1):
     try:
         vectors = [nlp(name).vector for name in body.special_features]
@@ -329,14 +339,14 @@ async def searchStops1(body: SearchStops1):
                 "Latitude": str(entity["latitude"]),
                 "Longitude": str(entity["longitude"]),
                 "Facilities": entity["facilities"],
-                "Special features": entity["special_features"]
+                "SpecialFeatures": entity["special_features"]
             })
         return returnValues
 
     except Exception as e:
         return {"message": "Error occurred during Milvus connection:", "error": str(e)}
 
-@app.get("/searchStops2")
+@app.post("/searchStops2")
 async def searchStops2(body: SearchStops2):
     try:
         vectors = [nlp(name).vector for name in body.special_features]
@@ -382,7 +392,7 @@ async def searchStops2(body: SearchStops2):
     except Exception as e:
         return {"message": "Error occurred during Milvus connection:", "error": str(e)}
     
-@app.get("/searchRoutes1")
+@app.post("/searchRoutes1")
 async def searchRoutes1(body: SearchRoutes1):
     try:
         vectors = [nlp(name).vector for name in body.routeDescription]
@@ -429,7 +439,7 @@ async def searchRoutes1(body: SearchRoutes1):
     except Exception as e:
         return {"message": "Error occurred during Milvus connection:", "error": str(e)}
 
-@app.get("/searchRoutes2")
+@app.post("/searchRoutes2")
 async def searchRoutes2(body: SearchRoutes2):
     try:
         vectors = [nlp(name).vector for name in body.routeDescription]
@@ -477,7 +487,7 @@ async def searchRoutes2(body: SearchRoutes2):
     except Exception as e:
         return {"message": "Error occurred during Milvus connection:", "error": str(e)}
 
-@app.get("/searchRoutes3")
+@app.post("/searchRoutes3")
 async def searchRoutes3(body: SearchRoutes3):
     try:
         vectors = [nlp(name).vector for name in body.routeDescription]
@@ -524,7 +534,7 @@ async def searchRoutes3(body: SearchRoutes3):
     except Exception as e:
         return {"message": "Error occurred during Milvus connection:", "error": str(e)}
     
-@app.get("/searchStops3")
+@app.post("/searchStops3")
 async def searchStops3(body: SearchStops3):
     try:
         vectors = [nlp(name).vector for name in body.special_features]
@@ -561,9 +571,9 @@ async def searchStops3(body: SearchStops3):
             returnValues.append({
                 "ID": entity["id"],
                 "Name": entity["name"],
-                "Nearby landmarks" : entity["nearby_landmarks"],
+                "NearbyLandmarks" : entity["nearby_landmarks"],
                 "Facilities" : entity["facilities"],
-                "Special features": entity["special_features"]
+                "SpecialFeatures": entity["special_features"]
             })
         return returnValues
 
@@ -576,4 +586,4 @@ if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
     
-#docker run --name attu -p 8000:3000 -e HOST_URL=http://192.168.78.220:8000 -e MILVUS_URL=http://192.168.78.220:19530 zilliz/attu:v2.3.6
+#docker run --name attu -p 8000:3000 -e HOST_URL=http://192.168.1.24.220:8000 -e MILVUS_URL=http://1192.168.1.24.220:19530 zilliz/attu:v2.3.6
