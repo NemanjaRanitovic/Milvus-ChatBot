@@ -277,8 +277,7 @@ async def searchLandmarks1(body: SearchLandmarks):
         )
         filtered_entities = []
         for entity in entities:
-            if (entity["Region"].lower() == body.region.lower() and
-                entity["NumberOfCitizens"] >= body.min_citizens and
+            if (entity["NumberOfCitizens"] >= body.min_citizens and
                 entity["NumberOfCitizens"] <= body.max_citizens):
                 filtered_entities.append(entity)
 
