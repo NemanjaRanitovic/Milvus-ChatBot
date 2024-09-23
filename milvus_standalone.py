@@ -585,4 +585,4 @@ if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
     
-#docker run --name attu -p 8000:3000 -e HOST_URL=http://192.168.1.24.220:8000 -e MILVUS_URL=http://1192.168.1.24.220:19530 zilliz/attu:v2.3.6
+#docker run --name attu -p 8000:3000 -e HOST_URL=http://192.168.1.24:8000 -e MILVUS_URL=http://192.168.1.24:19530 zilliz/attu:v2.3.6
